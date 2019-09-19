@@ -1,5 +1,7 @@
 import os
 from flask import Flask
+from . import db, auth
+
 
 
 
@@ -10,8 +12,7 @@ def create_app(test_config=None):
       d'instance"""
     app = Flask(__name__, instance_relative_config=True)
 
-    """définit une configuration par 
-    défaut que l'application utilisera:"""
+    """définit une configuration par défaut que l'application utilisera:"""
     app.config.from_mapping(
         # est utilisé par Flask et les extensions pour protéger les données.
         SECRET_KEY='dev',
@@ -31,13 +32,9 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # a simple page that says hello
-    @app.route('/hello')
-    def hello():
-        return 'Hello babs tu es bien installer'
 
     # init-db a été enregistré avec l'application
-    from . import db
-    db.init_app(app)
 
+    db.init_app(app)
+    app.register_blueprint(auth.bp)
     return app
